@@ -1,0 +1,199 @@
+openapi: 3.0.0
+info:
+  title: LMS Project API
+  version: 1.0.0
+  description: API documentation for LMS Project (User/Auth endpoints)
+tags:
+  - name: Auth
+    description: Authentication and User related endpoints
+servers:
+  - url: http://localhost:3000/api/v1
+paths:
+  /users/signup:
+    post:
+      tags:
+        - Auth
+      summary: User signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - name
+                - email
+                - password
+      responses:
+        '201':
+          description: User created
+        '400':
+          description: Bad request
+  /users/login:
+    post:
+      tags:
+        - Auth
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Login successful
+        '401':
+          description: Invalid credentials
+  /users:
+    get:
+      tags:
+        - Auth
+      summary: Get all users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of users
+        '401':
+          description: Unauthorized
+  /users/updatepassword:
+    patch:
+      tags:
+        - Auth
+      summary: Update user password
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+              required:
+                - currentPassword
+                - newPassword
+      responses:
+        '200':
+          description: Password updated
+        '400':
+          description: Bad request
+  /users/forgotpassword:
+    post:
+      tags:
+        - Auth
+      summary: Forgot password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              required:
+                - email
+      responses:
+        '200':
+          description: Password reset email sent
+        '404':
+          description: User not found
+  /users/resetpassword/{code}:
+    patch:
+      tags:
+        - Auth
+      summary: Reset password
+      parameters:
+        - in: path
+          name: code
+          schema:
+            type: string
+          required: true
+          description: Reset code sent to user email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newPassword:
+                  type: string
+              required:
+                - newPassword
+      responses:
+        '200':
+          description: Password reset successful
+        '400':
+          description: Invalid or expired code
+  /users/logout:
+    get:
+      tags:
+        - Auth
+      summary: Logout user
+      responses:
+        '200':
+          description: Logout successful
+  /users/facebook:
+    get:
+      tags:
+        - Auth
+      summary: Facebook authentication
+      responses:
+        '302':
+          description: Redirect to Facebook login
+  /users/facebook/callback:
+    get:
+      tags:
+        - Auth
+      summary: Facebook authentication callback
+      responses:
+        '200':
+          description: Facebook login successful
+        '401':
+          description: Facebook login failed
+  /users/google:
+    get:
+      tags:
+        - Auth
+      summary: Google authentication
+      responses:
+        '302':
+          description: Redirect to Google login
+  /users/google/callback:
+    get:
+      tags:
+        - Auth
+      summary: Google authentication callback
+      responses:
+        '200':
+          description: Google login successful
+        '401':
+          description: Google login failed
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 
