@@ -62,51 +62,27 @@ const handleJWTExpiredError = () =>
 
 // خطأ في وضع التطوير
 const sendErrorDev = (err, req, res) => {
-  if (req.originalUrl.startsWith("/api")) {
-
-    
-    return res.status(err.statusCode).json({
-      status: err.status,
-      error: err,
-      message: err.message,
-      stack: err.stack,
-    });
-  }
-  console.error("ERROR 💥", err);
-  return res.status(err.statusCode).render("error", {
-    title: "Something went wrong!",
-    msg: err.message,
+  res.status(err.statusCode).json({
+    status: err.status,
+    error: err,
+    message: err.message,
+    stack: err.stack,
   });
 };
 
 // خطأ في وضع التشغيل
 const sendErrorProd = (err, req, res) => {
-  
-  if (req.originalUrl.startsWith("/api")) {
-    if (err.isOperational) {
-      return res.status(err.statusCode).json({
-        status: err.status,
-        message: err.message,
-      });
-    }
-    console.error("ERROR 💥", err);
-    return res.status(500).json({
-      status: "error",
-      message: "Something went very wrong!",
-    });
-  }
-
   if (err.isOperational) {
-    return res.status(err.statusCode).render("error", {
-      title: "Something went wrong!",
-      msg: err.message,
+    return res.status(err.statusCode).json({
+      status: err.status,
+      message: err.message,
     });
   }
-
+  // أخطاء غير متوقعة
   console.error("ERROR 💥", err);
-  return res.status(500).render("error", {
-    title: "Something went wrong!",
-    msg: "Please try again later.",
+  return res.status(500).json({
+    status: "error",
+    message: "Something went very wrong!",
   });
 };
 
@@ -114,17 +90,10 @@ const sendErrorProd = (err, req, res) => {
 module.exports = async (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
-
-  // لو عايز تلغي NODE_ENV وتخلي دايمًا production behavior احذف السطر اللي تحت
   if (process.env.NODE_ENV === "development") {
-    
     return sendErrorDev(err, req, res);
   }
-
-  // نسخة جديدة من الخطأ
   let error = { ...err, message: err.message };
-
-  // PostgreSQL / TypeORM-specific error handling
   if (err.code === "23505") {
     error = await handleDuplicateFieldsDB(err);
   }
@@ -134,16 +103,7 @@ module.exports = async (err, req, res, next) => {
   if (err.name === "QueryFailedError") {
     error = handleValidationErrorDB(err);
   }
-
-  // JWT errors
   if (err.name === "JsonWebTokenError") error = handleJWTError();
   if (err.name === "TokenExpiredError") error = handleJWTExpiredError();
-
-  // أرجع دائمًا JSON فقط
-  res.status(error.statusCode).json({
-    status: error.status,
-    message: error.message || "Something went wrong!",
-    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
-    error: process.env.NODE_ENV === "development" ? err : undefined
-  });
+  return sendErrorProd(error, req, res);
 };
