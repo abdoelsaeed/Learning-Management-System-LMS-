@@ -33,6 +33,7 @@ app.use(
     saveUninitialized: true,
   })
 );
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(passport.initialize());
 app.use(passport.session({ secret: process.env.PASSPORT_SESSION }));
 app.use((req, res, next) => {
@@ -54,7 +55,6 @@ app.use(cookieParser());
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/courses", courseRouter);
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
 });
