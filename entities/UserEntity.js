@@ -67,10 +67,16 @@ module.exports = new EntitySchema({
       type: "varchar",
       nullable: true,
     },
-
     photo: {
       type: "varchar",
       nullable: true,
+    },
+  },
+  relations: {
+    courses: {
+      target: "Course",
+      type: "one-to-many",
+      inverseSide: "instructor",
     },
   },
 });

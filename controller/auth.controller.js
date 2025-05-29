@@ -135,6 +135,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
+  
   // التحقق مما إذا كان المستخدم مسجل دخول بالفعل (Facebook/Google)
   if (req.isAuthenticated()) {
     // تسجيل الدخول عبر Facebook
@@ -168,8 +169,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   //3)check if user still exists يعني مامسحش الاكونت مثلا
   const currentUser = await userService.getUserById(decoded.id);
-
-  
   if (!currentUser) {
     return next(
       new AppError("the user belonging to this token does not exist", 401)
