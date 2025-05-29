@@ -139,5 +139,11 @@ module.exports = async (err, req, res, next) => {
   if (err.name === "JsonWebTokenError") error = handleJWTError();
   if (err.name === "TokenExpiredError") error = handleJWTExpiredError();
 
-  sendErrorProd(error, req, res);
+  // أرجع دائمًا JSON فقط
+  res.status(error.statusCode).json({
+    status: error.status,
+    message: error.message || "Something went wrong!",
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+    error: process.env.NODE_ENV === "development" ? err : undefined
+  });
 };
