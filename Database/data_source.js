@@ -5,11 +5,7 @@ const Course = require("./../entities/CourseEntity");
 
 const AppDataSource = new DataSource({
   type: "postgres",
-  host: "localhost",
-  port: 5432,
-  username: "postgres",
-  password: "password",
-  database: "LMS",
+  url: process.env.DATABASE_URL, // استخدم رابط الاتصال من متغير البيئة
   synchronize: true,
   logging: false,
   entities: [User, Course],
