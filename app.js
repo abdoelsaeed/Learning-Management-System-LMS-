@@ -8,6 +8,7 @@ const courseRouter = require('./routes/course.routes')
 const session = require('express-session'); 
 const morgan = require("morgan");
 const cors = require("cors");
+const path = require('path');
 
 const cookieParser = require("cookie-parser");
 const AppError = require("./error/err");
@@ -15,7 +16,7 @@ const passport = require('./utils/passport');
 const globalErrorHandler = require("./controller/error.controller");
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
-const swaggerDocument = YAML.load('./swagger.yaml');
+const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
 const app = express();
 app.use(
   cors({
