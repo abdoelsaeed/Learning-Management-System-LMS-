@@ -8,6 +8,16 @@ module.exports = new EntitySchema({
       type: "int",
       generated: true,
     },
+    user_id: {
+      type: "int",
+    },
+    course_id: {
+      type: "int",
+    },
+    enrolled_at: {
+      type: "timestamp",
+      default: () => "CURRENT_TIMESTAMP",
+    },
     progress: {
       type: "float",
       default: 0,
@@ -16,17 +26,13 @@ module.exports = new EntitySchema({
       type: "boolean",
       default: false,
     },
-    enrolledAt: {
-      type: "timestamp",
-      default: () => "CURRENT_TIMESTAMP",
-    },
   },
   relations: {
-    student: {
+    user: {
       target: "User",
       type: "many-to-one",
       joinColumn: {
-        name: "studentId",
+        name: "user_id",
         referencedColumnName: "id",
       },
       onDelete: "CASCADE",
@@ -35,7 +41,7 @@ module.exports = new EntitySchema({
       target: "Course",
       type: "many-to-one",
       joinColumn: {
-        name: "courseId",
+        name: "course_id",
         referencedColumnName: "id",
       },
       onDelete: "CASCADE",

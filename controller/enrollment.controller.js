@@ -7,22 +7,22 @@ const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 exports.createEnrollment = catchAsync(async (req, res, next) => {
     const  userId  = req.user.id;
     const { courseId } = req.params;
-    console.log('courseId:', courseId);
+    
     const { success_url, cancel_url } = req.query;
 
     if (!courseId) {
         return next(new AppError("Please provide courseId", 400));
     }
     const course = await courseService.getCourseById(courseId);
-    console.log(course)
+    
     if (!course) {
         return next(new AppError("Course not found", 404));
     }
     let enrollment;
     //& if the course is free 
     if (+course.price == 0.00){
-        console.log(+course.price);
-        enrollment = await enrollmentService.createEnrollment({user: userId,course: courseId,});
+        
+        enrollment = await enrollmentService.createEnrollment({user_id: userId,course_id: courseId,});
         return res.status(200).json({
             status: "success",
             message: "Enrollment created successfully",
