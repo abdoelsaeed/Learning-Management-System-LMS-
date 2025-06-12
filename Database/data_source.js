@@ -1,16 +1,20 @@
-require("reflect-metadata");
+// require("reflect-metadata"); // تم نقله إلى server.js
 const { DataSource } = require("typeorm");
-const User = require("./../entities/UserEntity");
-console.log('User Entity Loaded:', User);
-const Course = require("./../entities/CourseEntity");
-const Enrollment = require("./../entities/EnrollmentEntity");
-const Payment = require("./../entities/PaymentEntity");
+const path = require('path'); // استيراد وحدة path
+
+// إزالة استيرادات الكيانات الفردية
+// const User = require("./../entities/UserEntity");
+// const Course = require("./../entities/CourseEntity");
+// const Enrollment = require("./../entities/EnrollmentEntity");
+// const Payment = require("./../entities/PaymentEntity");
+
 const AppDataSource = new DataSource({
   type: "postgres",
   url: process.env.DATABASE_URL, // استخدم رابط الاتصال من متغير البيئة
-  synchronize: false,
+  synchronize: false, // تم التغيير إلى false للإنتاج
   logging: false,
-  entities: [User, Course, Enrollment, Payment],
+  // استخدام path.join لاكتشاف الكيانات تلقائياً
+  entities: [path.join(__dirname, "..", "entities", "*.js")],
   migrations: [],
   subscribers: [],
 });

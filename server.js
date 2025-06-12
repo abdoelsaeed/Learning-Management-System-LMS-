@@ -1,3 +1,4 @@
+require("reflect-metadata");
 const app = require("./app");
 const { AppDataSource } = require("./Database/data_source");
 
