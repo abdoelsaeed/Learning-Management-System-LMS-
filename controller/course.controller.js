@@ -1,7 +1,6 @@
 const courseService = require('./../services/course.service');
 const catchAsync = require('./../error/catchAsyn');
 const AppError = require('./../error/err');
-const userService = require('./../services/user.service');
 
 exports.createCourse = catchAsync(async (req, res, next) => {
     const { title, description, price } = req.body;
@@ -45,7 +44,18 @@ exports.createCourse = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllCourses = catchAsync(async (req, res, next) => {
-  const courses = await courseService.getAllCourses();
+  let courses;
+  const statusFilter = req.query.status || undefined;
+
+  if (req.user && req.user.role === "admin") {
+    courses = await courseService.getAllCourses(true, statusFilter);
+    
+  } else {
+    courses = await courseService.getAllCourses(
+      false,
+      statusFilter || "approved"
+    );
+  }
   res.status(200).json({ courses });
 }); 
 
@@ -55,7 +65,7 @@ exports.updateCourse = catchAsync(async (req, res, next) => {
         return next(new AppError("You can't change the instructor", 401));
     }
     const course = await courseService.updateCourse(courseId,req.body);
-    console.log(course);
+    
     res.status(201).json({
         status:'success',
         data:course

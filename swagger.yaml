@@ -8,6 +8,8 @@ tags:
     description: Authentication and User related endpoints
   - name: Courses
     description: Courses management endpoints
+  - name: Enrollments
+    description: Enrollment management endpoints
 servers:
   - url: https://learning-management-system-lms-1nlh.vercel.app/api/v1
       description: Production server (Vercel)
@@ -239,6 +241,28 @@ paths:
           description: Unauthorized
         '403':
           description: Forbidden
+  /courses/foradmin:
+    get:
+      tags:
+        - Courses
+      summary: Get all courses for admin (including drafts, pending, etc.)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [approved, draft, pending, rejected, archived]
+          required: false
+          description: Filter courses by status (e.g., approved, draft, pending, rejected, archived)
+      responses:
+        '200':
+          description: List of all courses for admin
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
   /courses/{id}:
     patch:
       tags:
@@ -273,6 +297,45 @@ paths:
           description: Unauthorized
         '403':
           description: Forbidden
+        '404':
+          description: Course not found
+    get:
+      tags:
+        - Courses
+      summary: Get a course by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Course ID
+      responses:
+        '200':
+          description: Course found
+        '404':
+          description: Course not found
+  /enrollments/{courseId}:
+    post:
+      tags:
+        - Enrollments
+      summary: Create a new enrollment for a user in a course
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: courseId
+          schema:
+            type: integer
+          required: true
+          description: ID of the course to enroll in
+      responses:
+        '200':
+          description: Enrollment created successfully
+        '400':
+          description: Bad request (e.g., missing courseId, user already enrolled)
+        '401':
+          description: Unauthorized
         '404':
           description: Course not found
 components:

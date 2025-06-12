@@ -134,23 +134,27 @@ exports.logIn = catchAsync(async (req, res, next) => {
     });
 });
 
+
+
 exports.protect = catchAsync(async (req, res, next) => {
   
   // التحقق مما إذا كان المستخدم مسجل دخول بالفعل (Facebook/Google)
   if (req.isAuthenticated()) {
-    // تسجيل الدخول عبر Facebook
+    //? تسجيل الدخول عبر Facebook
     if (req.user.provider === "facebook") {
+    console.log('\x1b[34mfacebook:\x1b[0m');
       
     }
-    // تسجيل الدخول عبر Google
+    //! تسجيل الدخول عبر Google
     else if (req.user.provider === "google") {
+    console.log('\x1b[31mgoogle:\x1b[0m');
       
     }
     req.user = req.user;
     return next();
   }
 
-  // تسجيل الدخول التقليدي (بريد إلكتروني وكلمة مرور)
+  //& تسجيل الدخول التقليدي (بريد إلكتروني وكلمة مرور)
   let token;
   if (
     req.headers.authorization &&

@@ -1,15 +1,14 @@
 const { AppDataSource } = require("./../Database/data_source");
 const AppError = require("./../error/err");
 
-exports.getAllCourses = async () => {
+exports.getAllCourses = async (ifAdmin,statusFilter) => {
   try {
     const courseRepository = AppDataSource.getRepository("Course");
 
     // استخدام QueryBuilder لتحميل العلاقة instructor وتحديد الحقول
-    return await courseRepository
-      .createQueryBuilder("course") // ابدأ الاستعلام على كيان Course
+    const query = courseRepository
+      .createQueryBuilder("course")
       .select([
-        // حدد الحقول التي تريد جلبها من الكورس
         "course.id",
         "course.title",
         "course.status",
@@ -20,16 +19,25 @@ exports.getAllCourses = async () => {
         "course.preRequisites",
         "course.createdAt",
         "course.updatedAt",
-        // حقول من المدرب (باستخدام اسم العلاقة المستعار "instructor")
-        "instructor.id", // جلب ID المدرب
-        "instructor.name", // جلب اسم المدرب
-        // يمكنك إضافة حقول أخرى من المدرب هنا إذا أردت ظهورها (مثل photo, email)
-        // "instructor.photo",
+        "instructor.id",
+        "instructor.name",
         "instructor.email",
       ])
-      .leftJoin("course.instructor", "instructor")
-      .where("course.status = :status", { status: "approved" })
-      .getMany(); // نفذ الاستعلام لجلب العديد من النتائج
+      .leftJoin("course.instructor", "instructor");
+    if (ifAdmin) {
+      if(statusFilter){
+        query.where("course.status = :status", { status: statusFilter });
+      }
+      else{
+        query.where("course.status IN (:...statuses)", {
+          statuses: ["approved", "draft", "pending", "rejected", "archived"],
+        });
+            }
+    }
+    else {
+      query.where("course.status = :status", { status: "approved" });
+    }
+    return await query.getMany();
 
   } catch (err) {
     throw err;
@@ -58,7 +66,7 @@ exports.updateCourse = async (courseId, courseData) => {
       throw new Error('no course with this id'); // أو يمكنك رمي خطأ هنا
     }
     Object.assign(courseToUpdate, courseData);
-    console.log("courseToUpdate:", courseToUpdate);
+    
     const updatedCourse = await courseRepository.save(courseToUpdate);
     return updatedCourse;
 
@@ -66,3 +74,40 @@ exports.updateCourse = async (courseId, courseData) => {
     throw err;
   }
 };
+exports.getCourseById = async (courseId) => {
+  try {
+    const courseRepository = AppDataSource.getRepository("Course");
+
+    // استخدام QueryBuilder لتحميل العلاقة instructor وتحديد الحقول
+    return await courseRepository
+      .createQueryBuilder("course") // ابدأ الاستعلام على كيان Course
+      .select([
+        // حدد الحقول التي تريد جلبها من الكورس
+        "course.id",
+        "course.title",
+        "course.status",
+        "course.description",
+        "course.price",
+        "course.image",
+        "course.category",
+        "course.preRequisites",
+        "course.createdAt",
+        "course.updatedAt",
+        // حقول من المدرب (باستخدام اسم العلاقة المستعار "instructor")
+        "instructor.id", // جلب ID المدرب
+        "instructor.name", // جلب اسم المدرب
+        // يمكنك إضافة حقول أخرى من المدرب هنا إذا أردت ظهورها (مثل photo, email)
+        // "instructor.photo",
+        "instructor.email",
+      ])
+      .leftJoin("course.instructor", "instructor")
+      .where("course.status = :status and course.id = :courseId ", {
+        status: "approved",
+        courseId,
+      })
+      .getOne(); // نفذ الاستعلام لجلب العديد من النتائج
+
+  } catch (err) {
+    throw err;
+  }
+}

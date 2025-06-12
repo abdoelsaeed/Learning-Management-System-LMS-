@@ -4,19 +4,25 @@ const courseController = require("./../controller/course.controller");
 const authController = require('./../controller/auth.controller');
 router
   .route("/")
-  .get(courseController.getAllCourses)
+  .get( courseController.getAllCourses)
   .post(
     authController.protect,
     authController.restricted("instructor"),
     courseController.createCourse
   );
-
+  router.get(
+    "/foradmin",
+    authController.protect,
+    authController.restricted("admin"),
+    courseController.getAllCourses
+  );
   router
     .route("/:id")
     .patch(
       authController.protect,
       authController.restricted("instructor","admin"),
       courseController.updateCourse
-    );
+    )
+
 
 module.exports = router;

@@ -17,18 +17,23 @@ module.exports = new EntitySchema({
       enum: ["draft", "pending", "approved", "rejected", "archived"],
       default: "draft",
     },
-    description: {
-      type: "text",
-    },
+
     price: {
-      type: "decimal",
+      type: "numeric",
       precision: 10,
       scale: 2,
+      default: 0,
     },
     image: {
       type: "varchar",
       length: 255,
       nullable: true,
+    },
+    description: {
+      type: "varchar",
+      length: 100,
+      nullable: false,
+      default: '',
     },
     category: {
       type: "varchar",
