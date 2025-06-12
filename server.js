@@ -13,6 +13,7 @@ AppDataSource.initialize()
         app.listen(PORT, () => {
           console.log(`Server running on port ${PORT}`);
           console.log("Database connected!");
+          console.log("Loaded entities:", AppDataSource.options.entities);
         });
   })
   .catch((err) => {
