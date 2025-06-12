@@ -40,7 +40,6 @@ app.use(
 );
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(passport.initialize());
-app.use(passport.session({ secret: process.env.PASSPORT_SESSION }));
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();

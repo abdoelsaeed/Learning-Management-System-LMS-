@@ -27,6 +27,7 @@ router.get(
 router.get(
   "/facebook/callback",
   passport.authenticate("facebook"),
+  passport.session({ secret: process.env.PASSPORT_SESSION }),
   authController.callback_Facebook
 );
 
@@ -39,6 +40,7 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google"),
+  passport.session({ secret: process.env.PASSPORT_SESSION }),
   authController.callback_google
 );
 module.exports = router;
