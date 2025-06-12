@@ -13,8 +13,8 @@ const AppDataSource = new DataSource({
   url: process.env.DATABASE_URL, // استخدم رابط الاتصال من متغير البيئة
   synchronize: false, // تم التغيير إلى false للإنتاج
   logging: false,
-  // استخدام path.join لاكتشاف الكيانات تلقائياً
-  entities: [path.join(__dirname, "..", "entities", "*.js")],
+  // استخدام path.join و process.cwd() لاكتشاف الكيانات تلقائياً في بيئة الإنتاج
+  entities: [path.join(process.cwd(), "entities", "*.js")],
   migrations: [],
   subscribers: [],
 });
