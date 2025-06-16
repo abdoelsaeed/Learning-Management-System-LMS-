@@ -1,0 +1,605 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "LMS Project API",
+    "version": "1.0.0",
+    "description": "API documentation for LMS Project (User/Auth endpoints)"
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication and User related endpoints"
+    },
+    {
+      "name": "Courses",
+      "description": "Courses management endpoints"
+    },
+    {
+      "name": "Enrollments",
+      "description": "Enrollment management endpoints"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://learning-management-system-lms-theta.vercel.app/api/v1",
+      "description": "Production server (Vercel)"
+    },
+    {
+      "url": "http://localhost:3000/api/v1",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/users/signup": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "User signup",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "User login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Get all users",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/users/updatepassword": {
+      "patch": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Update user password",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currentPassword": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "currentPassword",
+                  "newPassword"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password updated"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
+      }
+    },
+    "/users/forgotpassword": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Forgot password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "email"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset email sent"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/users/resetpassword/{code}": {
+      "patch": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Reset password",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Reset code sent to user email"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newPassword": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "newPassword"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successful"
+          },
+          "400": {
+            "description": "Invalid or expired code"
+          }
+        }
+      }
+    },
+    "/users/logout": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logout user",
+        "responses": {
+          "200": {
+            "description": "Logout successful"
+          }
+        }
+      }
+    },
+    "/users/facebook": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Facebook authentication",
+        "responses": {
+          "302": {
+            "description": "Redirect to Facebook login"
+          }
+        }
+      }
+    },
+    "/users/facebook/callback": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Facebook authentication callback",
+        "responses": {
+          "200": {
+            "description": "Facebook login successful"
+          },
+          "401": {
+            "description": "Facebook login failed"
+          }
+        }
+      }
+    },
+    "/users/google": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Google authentication",
+        "responses": {
+          "302": {
+            "description": "Redirect to Google login"
+          }
+        }
+      }
+    },
+    "/users/google/callback": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Google authentication callback",
+        "responses": {
+          "200": {
+            "description": "Google login successful"
+          },
+          "401": {
+            "description": "Google login failed"
+          }
+        }
+      }
+    },
+    "/courses": {
+      "get": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Get all courses",
+        "responses": {
+          "200": {
+            "description": "List all courses"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Create a new course",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "price": {
+                    "type": "number"
+                  },
+                  "instructorId": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "title",
+                  "description",
+                  "price",
+                  "instructorId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Course created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/courses/foradmin": {
+      "get": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Get all courses for admin (including drafts, pending, etc.)",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "approved",
+                "draft",
+                "pending",
+                "rejected",
+                "archived"
+              ]
+            },
+            "required": false,
+            "description": "Filter courses by status (e.g., approved, draft, pending, rejected, archived)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all courses for admin"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    },
+    "/courses/{id}": {
+      "patch": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Update a course",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "Course ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "price": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Course updated"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Course not found"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Get a course by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "Course ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course found"
+          },
+          "404": {
+            "description": "Course not found"
+          }
+        }
+      }
+    },
+    "/courses/{id}/foradmin": {
+      "get": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Get course by ID (admin only, any status)",
+        "description": "Returns course details for admins regardless of status. Requires admin authentication.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Course ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course details (any status)"
+          },
+          "400": {
+            "description": "Not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden (if not admin)"
+          }
+        }
+      }
+    },
+    "/enrollments/{courseId}": {
+      "post": {
+        "tags": [
+          "Enrollments"
+        ],
+        "summary": "Create a new enrollment for a user in a course",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "courseId",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true,
+            "description": "ID of the course to enroll in"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Enrollment created successfully"
+          },
+          "400": {
+            "description": "Bad request (e.g., missing courseId, user already enrolled)"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Course not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

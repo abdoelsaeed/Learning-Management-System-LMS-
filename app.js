@@ -15,8 +15,7 @@ const AppError = require("./error/err");
 const passport = require('./utils/passport');
 const globalErrorHandler = require("./controller/error.controller");
 const swaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs');
-const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
+const swaggerDocument = require('./swagger.json');
 const paymentController = require('./controller/payment.controller');
 
 const app = express();
