@@ -315,6 +315,30 @@ paths:
           description: Course found
         '404':
           description: Course not found
+  /courses/{id}/foradmin:
+    get:
+      tags:
+        - Courses
+      summary: Get course by ID (admin only, any status)
+      description: Returns course details for admins regardless of status. Requires admin authentication.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Course ID
+      responses:
+        '200':
+          description: Course details (any status)
+        '400':
+          description: Not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden (if not admin)
   /enrollments/{courseId}:
     post:
       tags:

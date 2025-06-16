@@ -25,6 +25,7 @@ module.exports = new EntitySchema({
       minLength: 6,
       maxLength: 35,
       select: false,
+      //use joi here
     },
     createdAt: {
       type: "timestamp",

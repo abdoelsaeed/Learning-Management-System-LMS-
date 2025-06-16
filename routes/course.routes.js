@@ -16,6 +16,15 @@ router
     authController.restricted("admin"),
     courseController.getAllCourses
   );
+  router.get(
+    "/:id",
+    
+    courseController.getOneCourse
+  );
+  router.get("/:id/foradmin",authController.protect,
+    authController.restricted("admin"),
+     courseController.getOneCourse);
+
   router
     .route("/:id")
     .patch(

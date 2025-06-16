@@ -274,6 +274,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 });
 exports.resetPassword = catchAsync(async (req, res, next) => {
   const { code } = req.params;
+  console.log(code);
   const  {newPassword,email}  = req.body;
   if(newPassword.length < 6){
     return next(new AppError("New password must be at least 6 characters long", 400));

@@ -1,7 +1,7 @@
 const { AppDataSource } = require("./../Database/data_source");
 const AppError = require("./../error/err");
 
-exports.getAllCourses = async (ifAdmin,statusFilter) => {
+exports.getAllCourses = async (ifAdmin, statusFilter, titleFilter) => {
   try {
     const courseRepository = AppDataSource.getRepository("Course");
 
@@ -37,6 +37,12 @@ exports.getAllCourses = async (ifAdmin,statusFilter) => {
     else {
       query.where("course.status = :status", { status: "approved" });
     }
+
+    // إضافة فلتر العنوان
+    if (titleFilter) {
+      query.andWhere("course.title ILIKE :title", { title: `%${titleFilter}%` });
+    }
+
     return await query.getMany();
 
   } catch (err) {
@@ -101,11 +107,10 @@ exports.getCourseById = async (courseId) => {
         "instructor.email",
       ])
       .leftJoin("course.instructor", "instructor")
-      .where("course.status = :status and course.id = :courseId ", {
-        status: "approved",
+      .where(" course.id = :courseId ", {
         courseId,
       })
-      .getOne(); // نفذ الاستعلام لجلب العديد من النتائج
+      .getOne(); 
 
   } catch (err) {
     throw err;

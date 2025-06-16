@@ -43,17 +43,39 @@ exports.createCourse = catchAsync(async (req, res, next) => {
     });
 });
 
+exports.getOneCourse = catchAsync(async (req, res, next) => {
+  const course = await courseService.getCourseById(req.params.id);
+  if (!course) {
+    return next(new AppError("Not found this course", 400));
+  }
+
+  // إذا الكورس غير approved، اسمح فقط للأدمن أو صاحب الطلب المسجل دخول
+  if (
+    course.status !== "approved" && // بدون مسافة زائدة!
+    (!req.user || req.user.role !== "admin")
+  ) {
+    return next(new AppError("This course is not approved yet", 400));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: course,
+  });
+});
+
 exports.getAllCourses = catchAsync(async (req, res, next) => {
   let courses;
   const statusFilter = req.query.status || undefined;
+  const titleFilter = req.query.title || undefined;
 
   if (req.user && req.user.role === "admin") {
-    courses = await courseService.getAllCourses(true, statusFilter);
+    courses = await courseService.getAllCourses(true, statusFilter, titleFilter);
     
   } else {
     courses = await courseService.getAllCourses(
       false,
-      statusFilter || "approved"
+      "approved",
+      titleFilter
     );
   }
   res.status(200).json({ courses });
