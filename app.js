@@ -11,14 +11,17 @@ const morgan = require("morgan");
 const cors = require("cors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
+const fs = require('fs')
 const AppError = require("./error/err");
 const passport = require("./utils/passport");
 const globalErrorHandler = require("./controller/error.controller");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
-const swaggerDocument = require("./swagger.yaml");
+const yaml = require("js-yaml");
 const paymentController = require("./controller/payment.controller");
-
+const swaggerDocument = yaml.load(
+  fs.readFileSync(path.join(__dirname, "swagger.yaml"), "utf8")
+);
 const app = express();
 
 app.post(
