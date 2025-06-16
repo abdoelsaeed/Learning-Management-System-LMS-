@@ -4,31 +4,24 @@ dotenv.config({ path: "./config.env" });
 const express = require("express");
 const rateLimit = require("express-rate-limit");
 const userRouter = require("./routes/user.routes");
-const courseRouter = require("./routes/course.routes");
-const enrollRouter = require("./routes/enrollment.routes");
-const session = require("express-session");
+const courseRouter = require('./routes/course.routes');
+const enrollRouter = require('./routes/enrollment.routes');
+const session = require('express-session'); 
 const morgan = require("morgan");
 const cors = require("cors");
-const path = require("path");
+const path = require('path');
 const cookieParser = require("cookie-parser");
-const fs = require('fs')
 const AppError = require("./error/err");
-const passport = require("./utils/passport");
+const passport = require('./utils/passport');
 const globalErrorHandler = require("./controller/error.controller");
-const swaggerUi = require("swagger-ui-express");
-const YAML = require("yamljs");
-const yaml = require("js-yaml");
-const paymentController = require("./controller/payment.controller");
-const swaggerDocument = yaml.load(
-  fs.readFileSync(path.join(__dirname, "swagger.yaml"), "utf8")
-);
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
+const paymentController = require('./controller/payment.controller');
+
 const app = express();
 
-app.post(
-  "/webhook",
-  express.raw({ type: "application/json" }),
-  paymentController.stripeWebhook
-);
+app.post('/webhook', express.raw({type: 'application/json'}), paymentController.stripeWebhook);
 
 app.use(
   cors({
@@ -45,7 +38,7 @@ app.use(
     saveUninitialized: true,
   })
 );
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(passport.initialize());
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
@@ -59,7 +52,7 @@ const limiter = rateLimit({
 });
 app.use("/api", limiter);
 app.get("/favicon.ico", (req, res) => res.status(204));
-app.get("/", (req, res) => res.status(204).send("Welcome to LMS API"));
+app.get("/", (req, res) => res.status(204).send('Welcome to LMS API'));
 
 app.use(express.json());
 app.use(cookieParser());
