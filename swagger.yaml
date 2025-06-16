@@ -11,7 +11,7 @@ tags:
   - name: Enrollments
     description: Enrollment management endpoints
 servers:
-  - url: https://learning-management-system-lms-1nlh.vercel.app/api/v1
+  - url: https://learning-management-system-lms-theta.vercel.app/
       description: Production server (Vercel)
 
   - url: http://localhost:3000/api/v1
