@@ -15,7 +15,9 @@ const AppError = require("./error/err");
 const passport = require('./utils/passport');
 const globalErrorHandler = require("./controller/error.controller");
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
+const fs = require('fs');
+// const swaggerDocument = require('./swagger.json');
+const swaggerDocument = JSON.parse(fs.readFileSync(path.join(__dirname, 'public', 'swagger.json'), 'utf8'));
 const paymentController = require('./controller/payment.controller');
 
 const app = express();
@@ -58,6 +60,8 @@ app.use(cookieParser());
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/courses", courseRouter);
 app.use("/api/v1/enrollments", enrollRouter);
+
+app.use(express.static('public'));
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
