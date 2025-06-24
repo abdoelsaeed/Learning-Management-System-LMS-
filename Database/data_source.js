@@ -13,7 +13,7 @@ const AppDataSource = new DataSource({
   url: process.env.DATABASE_URL,
   synchronize: false,
   logging: true, // خلّيها true مؤقتًا للـ Debugging
-  entities: [User, Course, Enrollment, Payment], // استبدل Glob Pattern بقايمة صريحة
+  entities: [Course, User, Enrollment, Payment], // استبدل Glob Pattern بقايمة صريحة
   migrations: [path.join(process.cwd(), "migrations", "*.js")],
   subscribers: [],
   ssl: {
