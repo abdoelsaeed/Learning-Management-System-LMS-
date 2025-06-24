@@ -46,12 +46,7 @@ app.use((req, res, next) => {
   next();
 });
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
-const limiter = rateLimit({
-  max: 100,
-  windowMs: 60 * 60 * 1000,
-  message: "Too many requests from this IP, please try again in an hour!",
-});
-app.use("/api", limiter);
+
 app.get("/favicon.ico", (req, res) => res.status(204));
 app.get("/", (req, res) => res.status(204).send('Welcome to LMS API'));
 
