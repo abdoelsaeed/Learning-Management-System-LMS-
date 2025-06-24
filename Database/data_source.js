@@ -1,23 +1,31 @@
 require("reflect-metadata"); // أضفها هنا كإحتياط لو مش موجودة في server.js
 const { DataSource } = require("typeorm");
-const path = require("path");
-const User = require("./../entities/UserEntity");
-const Course = require("./../entities/CourseEntity");
-const Enrollment = require("./../entities/EnrollmentEntity");
-const Payment = require("./../entities/PaymentEntity");
+
 // أضف كيانات تانية لو موجودة
 // const Course = require("./entities/CourseEntity");
+const path = require("path");
+
+const entitiesPath =
+  process.env.NODE_ENV === "production"
+    ? path.join(__dirname, "../dist/entities/*.js")
+    : path.join(__dirname, "../src/entities/*.js");
+
+const User = require(path.join(__dirname, "../entities/UserEntity"));
+const Course = require(path.join(__dirname, "../entities/CourseEntity"));
+const Enrollment = require(path.join(
+  __dirname,
+  "../entities/EnrollmentEntity"
+));
+const Payment = require(path.join(__dirname, "../entities/PaymentEntity"));
 
 const AppDataSource = new DataSource({
   type: "postgres",
   url: process.env.DATABASE_URL,
   synchronize: false,
-  logging: true, // خلّيها true مؤقتًا للـ Debugging
-  entities: [Course, User, Enrollment, Payment], // استبدل Glob Pattern بقايمة صريحة
+  logging: true,
+  entities: [Course, User, Enrollment, Payment],
   subscribers: [],
-  ssl: {
-    rejectUnauthorized: false, // ضروري لـ Supabase
-  },
+  ssl: { rejectUnauthorized: false },
 });
 
 module.exports = { AppDataSource };
