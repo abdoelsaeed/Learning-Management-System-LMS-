@@ -14,7 +14,6 @@ const AppDataSource = new DataSource({
   synchronize: false,
   logging: true, // خلّيها true مؤقتًا للـ Debugging
   entities: [Course, User, Enrollment, Payment], // استبدل Glob Pattern بقايمة صريحة
-  migrations: [path.join(process.cwd(), "migrations", "*.js")],
   subscribers: [],
   ssl: {
     rejectUnauthorized: false, // ضروري لـ Supabase
